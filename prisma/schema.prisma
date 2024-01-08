@@ -1,0 +1,43 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mongodb"
+  // url      = env("DATABASE_URL")
+  url      = env("DATABASE_URL")
+}
+
+
+
+
+// Definisikan model MongoDB Anda di sini
+model User {
+  id            String    @id @default(auto()) @map("_id") @db.ObjectId
+  ussername     String
+  password      String
+  email         String?
+  heightUnit    String?
+  interests     String[]
+  img_name      String?
+  img_hash      String?
+  name          String?
+  gender        String?
+  birthday      String?
+  horoscope     String?
+  zodiac        String?
+  Height        Int?
+  weight        Int?
+  createdAt     DateTime?   @default(now())
+  updatedAt     DateTime?  
+  deletedAt     DateTime?  
+  deleted       Boolean?   @default(false)
+  @@map("users")
+  
+}
+
+ 
+
