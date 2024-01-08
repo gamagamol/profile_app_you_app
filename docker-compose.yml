@@ -1,0 +1,60 @@
+# @format
+
+version: '3'
+services:
+  profile-app:
+    container_name: profile-app
+    build:
+      context: ./profile-app
+      dockerfile: Dockerfile
+    volumes:
+      - /usr/src/app/node_modules
+      - ./profile-app:/usr/src/app
+    ports:
+      - '3000:3000'
+    depends_on:
+      - mongo
+    networks:
+      - app-network
+    environment:
+      DATABASE_URL: 'mongodb://mongo:27017/you_app?replicaSet=rs0&ssl=false&authSource=admin&retryWrites=true&w=majority&directConnection=true'
+
+  messages-app:
+    container_name: messages-app
+    build:
+      context: ./messages-app
+      dockerfile: Dockerfile
+    volumes:
+      - /usr/src/app/node_modules
+      - ./messages-app:/usr/src/app
+    command: sh -c "npm install -g nodemon && npm install && npm run dev "
+    ports:
+      - '4000:4000'
+    depends_on:
+      - mongo
+      - rabbitmq
+    networks:
+      - app-network
+
+  rabbitmq:
+    container_name: rabbitmq
+    image: rabbitmq:management
+    ports:
+      - '5672:5672'
+      - '15672:15672'
+    networks:
+      - app-network
+
+  mongo:
+    container_name: mongo
+    image: mongo
+    command: mongod --replSet rs0
+    ports:
+      - '27017:27017'
+      - '28017:28017'
+    networks:
+      - app-network
+
+networks:
+  app-network:
+    driver: bridge
